@@ -15,7 +15,6 @@ contract MessagesTokenTest is Test {
         msgTknSc = new MessagesToken(mintingAndLockDeadline);
     }
 
-
     function testMintingTokens() public {
         msgTknSc.mint(address(1), 1000);
         assertEq(msgTknSc.balanceOf(address(1)), 1000);
@@ -27,7 +26,7 @@ contract MessagesTokenTest is Test {
         assertEq(msgTknSc.balanceOf(address(1)), 1000);
     }
 
-    // @Notice Should fail on tokens transfer before mintingAndLockDeadLine
+    // @Notice: Should fail on tokens transfer before mintingAndLockDeadLine
     function testFailTransferTokensBeforeDeadline() public {
         msgTknSc.mint(address(1), 1000);
         vm.prank(address(1));
@@ -42,9 +41,20 @@ contract MessagesTokenTest is Test {
         msgTknSc.transfer(address(2), 500);
         assertEq(msgTknSc.balanceOf(address(2)), 500);
     }
+    
+    function testFailBurnTokensBeforeDeadline() public {
+        msgTknSc.mint(address(1), 1000);
+        vm.prank(address(1));
+        msgTknSc.burn(500);
+        assertEq(msgTknSc.balanceOf(address(1)), 500);
+    }
 
-    //function testFuzz_SetNumber(uint256 x) public {
-    //    counter.setNumber(x);
-    //    assertEq(counter.number(), x);
-    //}
+    function testBurnTokensAfterDeadline() public {
+        msgTknSc.mint(address(1), 1000);
+        vm.warp(mintingAndLockDeadline + 1 hours);
+        vm.prank(address(1));
+        msgTknSc.burn(500);
+        assertEq(msgTknSc.balanceOf(address(1)), 500);
+    }
+
 }

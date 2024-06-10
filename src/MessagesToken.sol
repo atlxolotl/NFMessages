@@ -44,9 +44,6 @@ contract MessagesToken is ERC20, ERC20Burnable, AccessControl, ERC20Permit, ERC2
         internal
         override(ERC20, ERC20Votes)
     {
-        //require(block.timestamp > mintingAndLockDeadline || 
-        //        from == address(0) || to == address(0),
-        //"Transfers not allowed before lock dead line");
         require(block.timestamp < mintingAndLockDeadline && from == address(0) ||
         block.timestamp > mintingAndLockDeadline && from != address(0),
         "Transfer or minting DeadLine Issue");
